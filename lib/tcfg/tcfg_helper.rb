@@ -3,12 +3,12 @@ require_relative 'tcfg_base'
 module TCFG
   module Helper
 
-    def set key, value
+    def tcfg_set key, value
       tcfg_code_defaults[key] = value
       return value
     end
 
-    def get key
+    def tcfg_get key
       tcfg_code_defaults[key]
     end
 

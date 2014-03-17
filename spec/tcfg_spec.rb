@@ -5,10 +5,10 @@ describe TCFG do
   end
 
   it "should support defining from code" do
-    @tcfg.set 'browser', :firefox
+    @tcfg.tcfg_set 'browser', :firefox
 
-    @tcfg.get(:browser).should eql :firefox
-    @tcfg.get('browser').should eql :firefox
+    @tcfg.tcfg_get(:browser).should eql :firefox
+    @tcfg.tcfg_get('browser').should eql :firefox
   end
 
   it "should throw warning if private method called" do
