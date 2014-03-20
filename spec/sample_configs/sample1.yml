@@ -1,0 +1,13 @@
+---
+sample_string: sample_string_value
+sample_integer: 123
+sample_float: 1.23
+sample_negative_integer: -12
+sample_negative_float: -12.345
+
+sample_array:
+  - a
+  - b
+  - c
+  - 123
+
