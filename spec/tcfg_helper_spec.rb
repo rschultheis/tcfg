@@ -43,6 +43,37 @@ describe TCFG::Helper do
       end
     end
 
+    it "should support overriding based on TCFG_ENVIRONMENT" do
+      ENV['TCFG_ENVIRONMENT'] = 'QA'
+
+      dummy_class.instance_eval do
+
+        tcfg_config_file SAMPLE_CONFIG_FILE
+        tcfg['sample_string'].should == 'this_is_QA_environment'
+        tcfg['sample_string_two'].should == 'a value only in QA environment'
+
+        ENV['TCFG_ENVIRONMENT'] = 'DEV'
+        tcfg['sample_string'].should == 'this_is_DEV_environment'
+
+      end
+    end
+
+    it "should take environment from secret file if defined" do
+      ENV['TCFG_ENVIRONMENT'] = 'QA'
+
+      dummy_class.instance_eval do
+
+        tcfg_config_file SAMPLE_CONFIG_FILE
+        tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
+
+        tcfg['sample_string'].should == 'secret_QA_setting'
+
+        #BUG!
+        #tcfg['sample_string_two'].should == 'a value only in QA environment'
+      end
+
+    end
+
     it "should support overriding based on environment variables prefixed with TCFG_" do
       ENV['TCFG_sample_string'] = 'overridden'
       dummy_class.instance_eval do
@@ -57,5 +88,5 @@ describe TCFG::Helper do
 
   #TODO: changing the config file should forget any config from old file
   #TODO: retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
-
+  #TODO:  any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
 end

@@ -8,7 +8,7 @@ module TCFG
     DEFAULT_SECRET_CONFIG_FILE = 'tcfg.secret.yml'
 
     def tcfg
-      resolved_config = {}
+      resolved_config = ActiveSupport::HashWithIndifferentAccess.new
 
       #tier 1 code defaults
       resolved_config.merge! tier_code_defaults
@@ -19,6 +19,8 @@ module TCFG
       #tier 3, the main config file
       resolved_config.merge! tier_secret_config_file
 
+      #tier 4, environment overrides
+      resolved_config.merge! tier_environment_overrides
 
       #tier 5, environment variable overrides
       resolved_config.each_pair do |k, v|
@@ -62,10 +64,19 @@ module TCFG
       tcfg_load_optional_config_file @tcfg_secret_config_filename
     end
 
+    def tier_environment_overrides
+      return {} unless @tcfg_environments_config and ENV['TCFG_ENVIRONMENT']
+      @tcfg_environments_config[ENV['TCFG_ENVIRONMENT']]
+    end
+
     def tcfg_load_optional_config_file filename
+      @tcfg_environments_config ||= ActiveSupport::HashWithIndifferentAccess.new
       if File.exist? filename
         file_contents = YAML.load_file filename
-        ActiveSupport::HashWithIndifferentAccess.new file_contents
+        hashed = ActiveSupport::HashWithIndifferentAccess.new file_contents
+        environments = hashed.delete :tcfg_environments
+        @tcfg_environments_config.merge!(environments) if environments
+        hashed
       else
         {}
       end
