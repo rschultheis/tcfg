@@ -46,7 +46,7 @@ TCFG implements a tiered approach to configuration which is designed to maximize
 
 * **Environment overrides** which can be defined in special 'environments' sections of either tcfg.yml or tcfg.secret.yml
 
-* **Environment variables** can override any peice of configuration.  A Special T_ENVIRONMENT environment variable can be used for macro level control
+* **Environment variables** can override any peice of configuration.  A Special TCFG_ENVIRONMENT environment variable can be used for macro level control
   of all environment based overrides.
 
 
