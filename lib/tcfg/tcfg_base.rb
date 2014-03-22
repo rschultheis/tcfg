@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/indifferent_access'
-
 require_relative 'tcfg_helper'
 
 module TCFG

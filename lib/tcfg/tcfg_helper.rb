@@ -1,11 +1,12 @@
 require 'yaml'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/hash/deep_merge'
 
 require_relative 'tcfg_base'
 
 module TCFG
   module Helper
     DEFAULT_CONFIG_FILE = 'tcfg.yml'
-    DEFAULT_SECRET_CONFIG_FILE = 'tcfg.secret.yml'
 
     def tcfg
       resolved_config = ActiveSupport::HashWithIndifferentAccess.new
@@ -60,8 +61,17 @@ module TCFG
     end
 
     def tier_secret_config_file
-      @tcfg_secret_config_filename ||= DEFAULT_CONFIG_FILE
-      tcfg_load_optional_config_file @tcfg_secret_config_filename
+      if @tcfg_secret_config_filename
+        tcfg_load_optional_config_file @tcfg_secret_config_filename
+      elsif @tcfg_config_filename
+        ext = File.extname @tcfg_config_filename
+        base = File.basename @tcfg_config_filename, ext
+        dir = File.dirname @tcfg_config_filename
+        possible_secret_filename = dir + '/' + base + '.secret' + ext
+        tcfg_load_optional_config_file possible_secret_filename
+      else
+        {}
+      end
     end
 
     def tier_environment_overrides
@@ -75,7 +85,7 @@ module TCFG
         file_contents = YAML.load_file filename
         hashed = ActiveSupport::HashWithIndifferentAccess.new file_contents
         environments = hashed.delete :tcfg_environments
-        @tcfg_environments_config.merge!(environments) if environments
+        @tcfg_environments_config.deep_merge!(environments) if environments
         hashed
       else
         {}

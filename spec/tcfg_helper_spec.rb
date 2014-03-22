@@ -8,10 +8,6 @@ describe TCFG::Helper do
     anon_class.new
   end
 
-  after(:each) do
-    ENV.delete_if {|k| k =~ /^TCFG_/ }
-  end
-
   describe "each config tier independently" do
     it "should support configuration from code using set method" do
       dummy_class.instance_eval do
@@ -68,8 +64,8 @@ describe TCFG::Helper do
 
         tcfg['sample_string'].should == 'secret_QA_setting'
 
-        #BUG!
-        #tcfg['sample_string_two'].should == 'a value only in QA environment'
+        #this is defined in the normal/non-secret file only.  It is still available
+        tcfg['sample_string_two'].should == 'a value only in QA environment'
       end
 
     end

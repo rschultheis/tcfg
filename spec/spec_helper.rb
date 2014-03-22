@@ -23,10 +23,11 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'tcfg'
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
-
 RSpec.configure do |config|
+
+  #remove environment variables laying around from last test
+  config.before(:each) do
+    ENV.delete_if {|k| k =~ /^TCFG_/ }
+  end
 
 end

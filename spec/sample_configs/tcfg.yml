@@ -1,0 +1,23 @@
+---
+sample_string: sample_string_value_from_default_file
+sample_integer: 123
+sample_float: 1.23
+sample_negative_integer: -12
+sample_negative_float: -12.345
+
+sample_array:
+  - a
+  - b
+  - c
+  - 123
+
+
+tcfg_environments:
+  QA:
+    sample_string: 'this_is_QA_environment'
+    sample_string_two: 'a value only in QA environment'
+  DEV:
+    sample_string: 'this_is_DEV_environment'
+
+#should be overridden by tcfg.secret.yml
+sample_secret_username: define_this_in_secret_file
