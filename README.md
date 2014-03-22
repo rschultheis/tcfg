@@ -1,59 +1,90 @@
 TCFG
 ====
-Test suite configuration for the real world of software development
+
+TCFG (pronounced "tee config") is test suite configuration for the real world.  TCFG offers:
+
+* Support for easily controlling which environment your tests execute against
+
+* A tiered structure to configuration which allows for every kind of configuration scenario to be supported.
+
+Background
+----------
+
+The Wiki contains more in depth information.  Some good places to start:
+
+* [Test suite configuration manifesto](https://github.com/rschultheis/tcfg/wiki/Test-Suite-Configuration-Manifesto)
+
+* [The tiers of configuration in TCFG](https://github.com/rschultheis/tcfg/wiki/The-tiers-of-configuration-in-TCFG)
 
 
-Test suite configuration manifesto
-----------------------------------
+Getting started
+---------------
 
-We hereby declare that executors of test suites have the following rights:
+### Using in RSpec
 
-* You shall be able to control your test suite using environment variables.
-  _You shall not be required to edit config files in order to run your test suite in the desired way.
-  This decree will ensure your test suite integrates easily into any continous integration system._
+Start by installing the gem:
 
-* Your test configuration shall make it easy to support test execution against your various environments
-  (QA, Staging, Production, local development, etc).  _You shall be able to control the environment using
-  a single environment variable._
+    $ gem install tcfg
 
-Accordingly, we enact the following principles that shall govern the land of test configuration:
+In the project root, make a yaml file called tcfg.yml that contains all configuration you want to be able to control.  For a selenium suite, it might look something like this:
 
-* Configuration should be used only when needed.  The convention-over-configuration paradigm should be used wherever 
-  possible to avoid excessive coniguration.
+    ---
+    #start with basic defaults
+    BROWSER: firefox
+    BASE_URL: http://localhost:8080
+    LOG_LEVEL: INFO
 
-* Test suite configuration should generally not be conflated with test data or reference data.  Separate management
-  of test data is encouraged except for cases where only a very small amount of test data is needed.
+    #This is a special section with overrides by 'environment'
+    tcfg_environments:
+      QA:
+        BASE_URL: http://qa.mysite.com
+
+      Production:
+        BASE_URL: https://mysite.com
+
+Then configure RSpec to use tcfg in your spec helper file (typically called spec/spec_helper.rb):
+
+    require 'tcfg'
+
+    RSpec.configure do |config|
+      config.include TCFG::Helper
+    end
+
+Now you can access configuration in any before, after, or it block, like:
+
+    require 'selenium-webdriver'
+    RSpec.configure do |config|
+      config.before(:all) do
+        @browser = Selenium::WebDriver.for tcfg['BROWSER']
+      end
+
+      config.before(:each) do
+        @browser.get tcfg['BASE_URL']
+      end
+
+      config.after(:all) do
+        @browser.quit
+      end
+    end
+
+If you need to access configuration outside of a before, after, or it block you can use the TCFG module directly:
+
+    Log.level = TCFG.tcfg['LOG_LEVEL']
+
+To control your test suite, you can use environment variables.  To change the browser used:
+
+    #To execute with all default configuration
+    $ rspec
+
+    #To change the browser used
+    $ TCFG_BROWSER=chrome rspec
+
+    #To change which environment the tests execute against:
+    $ TCFG_ENVIRONMENT=QA rspec
 
 
-The tiers of configuration
---------------------------
+### Other uses
 
-TCFG implements a tiered approach to configuration which is designed to maximize flexibility and ensure a test suite is easy to control.
-
-#### Properties of configuration tiers
-
-* Each configuration tier is optional.
-* A config variable in any tier overrides settings in lower tiers.
-
-#### The tiers:
-
-* **Defaults** defined in code
-
-* **Public Defaults** defined in tcfg.yml config file
-
-* **Private configuration** defined in tcfg.secret.yml file.  This file should generally not be checked into source control as it is 
-  intended to contain things like passwords and/or API keys or any sensistive data.
-
-* **Environment overrides** which can be defined in special 'environments' sections of either tcfg.yml or tcfg.secret.yml
-
-* **Environment variables** can override any peice of configuration.  A Special TCFG_ENVIRONMENT environment variable can be used for macro level control
-  of all environment based overrides.
-
-
-
-Example
--------
-
-An example is a big TODO here.  Will prefer to link to the example rspec capybara test suite once it oncorporates this gem.
+TCFG is a general purpose configuration framework.  It should be possible to use with most Ruby test frameworks or even for non testing uses.  If you have a use and aren't sure how to handle it with tcfg, file an issue we'll see if we can help you out.
 
 
