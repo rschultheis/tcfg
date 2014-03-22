@@ -29,9 +29,9 @@ describe TCFG::Helper do
 
   end
 
-  #TODO: changing the config file should forget any config from old file
   #TODO: retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
   #TODO: any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
   #TODO: config file does not exist
   #TODO: using TCFG as a singleton
+  #TODO: changing the config file should forget any config from old file
 end
