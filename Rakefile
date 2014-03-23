@@ -17,11 +17,21 @@ Jeweler::Tasks.new do |gem|
   gem.name = "tcfg"
   gem.homepage = "http://github.com/rschultheis/tcfg"
   gem.license = "MIT"
-  gem.summary = %Q{Test suite configuration}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "Test suite configuration for the real world"
+  gem.description = "A tiered approach to configuration which allows for full control of your test suite through environment variables"
   gem.email = "robert.schultheis@gmail.com"
-  gem.authors = ["rob"]
+  gem.authors = ["robert schultheis"]
+  gem.files = [
+    "Gemfile",
+    "Gemfile.lock",
+    "LICENSE.txt",
+    "README.md",
+    "Rakefile",
+    "VERSION",
+  ] + Dir.glob('lib/**/*.rb')
+
   # dependencies defined in Gemfile
+
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -31,13 +41,5 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-desc "Code coverage detail"
-task :simplecov do
-  ENV['COVERAGE'] = "true"
-  Rake::Task['spec'].execute
-end
-
 task :default => :spec
 
-require 'yard'
-YARD::Rake::YardocTask.new

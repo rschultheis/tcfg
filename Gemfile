@@ -1,13 +1,9 @@
 source "http://rubygems.org"
 
 #used for HashWithIndifferentAccess
-gem 'activesupport'
+gem 'activesupport', '~> 3.2'
 
 group :development do
-  gem "rspec"
-  gem "yard"
-  gem "rdoc"
-  gem "bundler"
-  gem "jeweler"
-  gem "simplecov"
+  gem "rspec", '~> 2.14'
+  gem "jeweler", '~> 2'
 end
