@@ -48,6 +48,7 @@ describe TCFG::Helper do
         tcfg['sample_string'].should == 'this_is_QA_environment'
         tcfg['sample_string_two'].should == 'a value only in QA environment'
 
+        tcfg_reset
         ENV['TCFG_ENVIRONMENT'] = 'DEV'
         tcfg['sample_string'].should == 'this_is_DEV_environment'
 
@@ -66,6 +67,9 @@ describe TCFG::Helper do
 
         #this is defined in the normal/non-secret file only.  It is still available
         tcfg['sample_string_two'].should == 'a value only in QA environment'
+
+        #the resolved config should include the environmet...its useful
+        tcfg['TCFG_ENVIRONMENT'].should == 'QA'
       end
 
     end
@@ -79,6 +83,18 @@ describe TCFG::Helper do
         tcfg['sample_string'].should == 'overridden'
 
       end
+    end
+  end
+
+  describe "preventing invalid usage" do
+    it "should give a clear exception if a non-existent environment is specified" do
+      ENV['TCFG_ENVIRONMENT'] = 'NOTREAL'
+      expect { TCFG.tcfg }.to raise_error(TCFG::NoSuchEnvironmentError)
+    end
+
+    it "should give a clear exception if a non-existent config file is specified" do
+      expect { TCFG.tcfg_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
+      expect { TCFG.tcfg_secret_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
     end
   end
 
