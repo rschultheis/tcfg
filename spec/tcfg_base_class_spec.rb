@@ -33,7 +33,3 @@ describe TCFG::Base do
   end
 end
 
-#TODO: any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
-#TODO: config file does not exist
-#TODO: using TCFG as a singleton
-#TODO: changing the config file should forget any config from old file

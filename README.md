@@ -77,10 +77,10 @@ To control your test suite, you can use environment variables.  To change the br
     $ rspec
 
     #To change the browser used
-    $ TCFG_BROWSER=chrome rspec
+    $ T_BROWSER=chrome rspec
 
     #To change which environment the tests execute against:
-    $ TCFG_ENVIRONMENT=QA rspec
+    $ T_ENVIRONMENT=QA rspec
 
 
 ### Other uses

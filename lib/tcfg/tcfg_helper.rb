@@ -99,7 +99,7 @@ module TCFG
     end
 
     def tcfg_env_var_name key
-      @tcfg_env_var_prefix ||= 'TCFG_'
+      @tcfg_env_var_prefix ||= 'T_'
       @tcfg_env_var_prefix + key
     end
 

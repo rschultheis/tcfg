@@ -37,8 +37,8 @@ describe TCFG::Helper do
       end
     end
 
-    it "should support overriding based on TCFG_ENVIRONMENT" do
-      ENV['TCFG_ENVIRONMENT'] = 'QA'
+    it "should support overriding based on T_ENVIRONMENT" do
+      ENV['T_ENVIRONMENT'] = 'QA'
 
       subject.instance_eval do
 
@@ -47,14 +47,14 @@ describe TCFG::Helper do
         tcfg['sample_string_two'].should == 'a value only in QA environment'
 
         tcfg_reset
-        ENV['TCFG_ENVIRONMENT'] = 'DEV'
+        ENV['T_ENVIRONMENT'] = 'DEV'
         tcfg['sample_string'].should == 'this_is_DEV_environment'
 
       end
     end
 
     it "should take environment from secret file if defined" do
-      ENV['TCFG_ENVIRONMENT'] = 'QA'
+      ENV['T_ENVIRONMENT'] = 'QA'
 
       subject.instance_eval do
 
@@ -67,21 +67,21 @@ describe TCFG::Helper do
         tcfg['sample_string_two'].should == 'a value only in QA environment'
 
         #the resolved config should include the environmet...its useful
-        tcfg['TCFG_ENVIRONMENT'].should == 'QA'
+        tcfg['T_ENVIRONMENT'].should == 'QA'
       end
 
     end
 
-    it "should support overriding based on environment variables prefixed with TCFG_" do
-      ENV['TCFG_sample_string'] = 'overridden'
+    it "should support overriding based on environment variables prefixed with T_" do
+      ENV['T_sample_string'] = 'overridden'
       subject.instance_eval do
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg['sample_string'].should == 'overridden'
       end
     end
 
-    it "should support overriding based on environment variables prefixed with TCFG_" do
-      ENV['TCFG_sample_string'] = 'overridden'
+    it "should support overriding based on environment variables prefixed with T_" do
+      ENV['T_sample_string'] = 'overridden'
       subject.instance_eval do
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg['sample_string'].should == 'overridden'
@@ -92,7 +92,7 @@ describe TCFG::Helper do
 
   describe "preventing invalid usage" do
     it "should give a clear exception if a non-existent environment is specified" do
-      ENV['TCFG_ENVIRONMENT'] = 'NOTREAL'
+      ENV['T_ENVIRONMENT'] = 'NOTREAL'
       expect { subject.tcfg }.to raise_error(TCFG::NoSuchEnvironmentError)
     end
 
@@ -133,5 +133,3 @@ describe TCFG::Helper do
   end
 end
 
-#TODO:  any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
-#TODO: changing the config file should forget any config from old file
