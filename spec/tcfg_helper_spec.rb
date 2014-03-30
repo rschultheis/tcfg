@@ -33,15 +33,12 @@ describe TCFG::Helper do
         tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
         tcfg.keys.include?('sample_secret_username').should == true
         tcfg['sample_secret_username'].should == 'this_is_a_username'
-
       end
     end
 
-    it "should support overriding based on T_ENVIRONMENT" do
+    it "should support overriding based on T_ENVIRONMENT by default" do
       ENV['T_ENVIRONMENT'] = 'QA'
-
       subject.instance_eval do
-
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg['sample_string'].should == 'this_is_QA_environment'
         tcfg['sample_string_two'].should == 'a value only in QA environment'
@@ -49,15 +46,12 @@ describe TCFG::Helper do
         tcfg_reset
         ENV['T_ENVIRONMENT'] = 'DEV'
         tcfg['sample_string'].should == 'this_is_DEV_environment'
-
       end
     end
 
     it "should take environment from secret file if defined" do
       ENV['T_ENVIRONMENT'] = 'QA'
-
       subject.instance_eval do
-
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
 
@@ -69,10 +63,9 @@ describe TCFG::Helper do
         #the resolved config should include the environmet...its useful
         tcfg['T_ENVIRONMENT'].should == 'QA'
       end
-
     end
 
-    it "should support overriding based on environment variables prefixed with T_" do
+    it "should support overriding based on environment variables prefixed with T_ by default" do
       ENV['T_sample_string'] = 'overridden'
       subject.instance_eval do
         tcfg_config_file SAMPLE_CONFIG_FILE
@@ -80,14 +73,20 @@ describe TCFG::Helper do
       end
     end
 
-    it "should support overriding based on environment variables prefixed with T_" do
-      ENV['T_sample_string'] = 'overridden'
-      subject.instance_eval do
-        tcfg_config_file SAMPLE_CONFIG_FILE
-        tcfg['sample_string'].should == 'overridden'
-      end
-    end
+  end
 
+  describe "configuring a custom environment variable prefix" do
+    it "should allow changing environment variable prefix to a custom value" do
+      subject.tcfg_set_env_var_prefix('CUST_')
+      ENV['CUST_ENVIRONMENT'] = 'QA'
+      ENV['CUST_sample_string'] = 'environmental override'
+      subject.tcfg_config_file SAMPLE_CONFIG_FILE
+      subject.tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
+      subject.tcfg['sample_negative_integer'].should == -12
+      subject.tcfg['sample_secret_username'].should == 'this_is_a_username'
+      subject.tcfg['sample_string_two'].should == "using CUST_ for the environment prefix"
+      subject.tcfg['sample_string'].should eql 'environmental override'
+    end
   end
 
   describe "preventing invalid usage" do

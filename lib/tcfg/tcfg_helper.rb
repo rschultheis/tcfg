@@ -44,6 +44,11 @@ module TCFG
       @tcfg_resolved_config = nil
     end
 
+    def tcfg_set_env_var_prefix prefix
+      @tcfg_env_var_prefix = prefix
+      tcfg_reset
+    end
+
     private
 
     #define how we handle state for each of the tiers
@@ -84,7 +89,7 @@ module TCFG
       if File.exist? filename
         file_contents = YAML.load_file filename
         hashed = ActiveSupport::HashWithIndifferentAccess.new file_contents
-        environments = hashed.delete :tcfg_environments
+        environments = hashed.delete tcfg_env_var_name('environments').downcase
         @tcfg_environments_config.deep_merge!(environments) if environments
         hashed
       else

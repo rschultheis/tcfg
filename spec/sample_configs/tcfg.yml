@@ -12,7 +12,7 @@ sample_array:
   - 123
 
 
-tcfg_environments:
+t_environments:
   QA:
     sample_string: 'this_is_QA_environment'
     sample_string_two: 'a value only in QA environment'

@@ -16,9 +16,13 @@ sample_hash:
   h_i: 999
   h_a: [1,2,3]
 
-tcfg_environments:
+t_environments:
   QA:
     sample_string: 'this_is_QA_environment'
     sample_string_two: 'a value only in QA environment'
   DEV:
     sample_string: 'this_is_DEV_environment'
+
+cust_environments:
+  QA:
+    sample_string_two: 'using CUST_ for the environment prefix'

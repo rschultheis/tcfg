@@ -35,7 +35,7 @@ In the project root, make a yaml file called tcfg.yml that contains all configur
     LOG_LEVEL: INFO
 
     #This is a special section with overrides by 'environment'
-    tcfg_environments:
+    t_environments:
       QA:
         BASE_URL: http://qa.mysite.com
 
