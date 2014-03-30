@@ -71,12 +71,12 @@ module TCFG
     end
 
     def tier_environment_overrides
-      tenv = ENV['TCFG_ENVIRONMENT']
+      tenv = tcfg_fetch_env_var 'ENVIRONMENT', nil
       return {} unless @tcfg_environments_config and tenv
       unless @tcfg_environments_config.has_key? tenv
         raise TCFG::NoSuchEnvironmentError.new "No such environment in configuration '#{tenv}'"
       end
-      @tcfg_environments_config[tenv].merge({'TCFG_ENVIRONMENT' => tenv})
+      @tcfg_environments_config[tenv].merge({tcfg_env_var_name('ENVIRONMENT') => tenv})
     end
 
     def tcfg_load_optional_config_file filename
@@ -98,6 +98,15 @@ module TCFG
       end
     end
 
+    def tcfg_env_var_name key
+      @tcfg_env_var_prefix ||= 'TCFG_'
+      @tcfg_env_var_prefix + key
+    end
+
+    def tcfg_fetch_env_var key, not_defined_value
+      ENV.fetch tcfg_env_var_name(key), not_defined_value
+    end
+
     def resolve_config
       resolved_config = ActiveSupport::HashWithIndifferentAccess.new
 
@@ -115,8 +124,7 @@ module TCFG
 
       #tier 5, environment variable overrides
       resolved_config.each_pair do |k, v|
-        env_var_name = "TCFG_#{k}"
-        resolved_config[k] = ENV.fetch(env_var_name, v)
+        resolved_config[k] = tcfg_fetch_env_var(k, v)
       end
       resolved_config
     end
