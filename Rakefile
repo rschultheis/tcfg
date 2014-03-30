@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'bundler'
+
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -43,3 +44,9 @@ end
 
 task :default => :spec
 
+#documentation
+require 'yard'
+YARD::Rake::YardocTask.new do |t|
+  t.files   = ['lib/**/*.rb']   # optional
+  #t.options = ['--any', '--extra', '--opts'] # optional
+end
