@@ -100,11 +100,13 @@ describe TCFG::Helper do
       expect { subject.tcfg_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
       expect { subject.tcfg_secret_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
     end
+
+    it "should give a clear exception is non-existent key is requested" do
+      expect { subject.tcfg_get 'fake_key' }.to raise_error(TCFG::NoSuchConfigurationKeyError)
+    end
   end
 
-  #TODO: changing the config file should forget any config from old file
-  #TODO: retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
-  #
+  #retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
   describe "tcfg immutablability" do
     before(:each) do
       subject.tcfg_config_file SAMPLE_CONFIG_FILE
@@ -132,3 +134,4 @@ describe TCFG::Helper do
 end
 
 #TODO:  any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
+#TODO: changing the config file should forget any config from old file

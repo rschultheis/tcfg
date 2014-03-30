@@ -69,7 +69,7 @@ Now you can access configuration in any before, after, or it block, like:
 
 If you need to access configuration outside of a before, after, or it block you can use the TCFG module directly:
 
-    Log.level = TCFG.tcfg['LOG_LEVEL']
+    Log.level = TCFG['BASE_URL']
 
 To control your test suite, you can use environment variables.  To change the browser used:
 

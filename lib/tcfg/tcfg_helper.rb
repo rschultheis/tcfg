@@ -33,7 +33,11 @@ module TCFG
     end
 
     def tcfg_get key
-      tcfg[key]
+      t_tcfg = tcfg
+      unless t_tcfg.has_key? key
+        raise NoSuchConfigurationKeyError.new "No configuration defined for '#{key}'"
+      end
+      t_tcfg[key]
     end
 
     def tcfg_reset
@@ -122,4 +126,5 @@ module TCFG
   #custom exceptions
   class NoSuchEnvironmentError < StandardError; end
   class NoSuchConfigFileError < StandardError; end
+  class NoSuchConfigurationKeyError < StandardError; end
 end
