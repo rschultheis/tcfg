@@ -130,5 +130,60 @@ describe TCFG::Helper do
     end
 
   end
+
+  describe "deep overriding based on environment variable" do
+    before(:each) do
+      h = {
+        'aa' => 'AAAA',
+        'bb' => ['B', 'BB'],
+        'cc' => {
+          'dd' => 'DDD',
+          'ee' => {
+            'ff' => 'F'
+          }
+        }
+      }
+      subject.tcfg_set 'some_deep_config', h
+      subject.tcfg['some_deep_config']['cc']['dd'].should eql 'DDD'
+      subject.tcfg['some_deep_config']['cc']['ee']['ff'].should eql 'F'
+    end
+
+
+    it "should allow for deep overriding deep config entirely" do
+      ENV['T_some_deep_config'] = 'xxxx'
+      subject.tcfg_reset
+      subject.tcfg['some_deep_config'].should eql 'xxxx'
+    end
+
+    it "should allow for deep overriding by seperating keys with a - character" do
+      ENV['T_some_deep_config-aa'] = 'xxxx'
+      ENV['T_some_deep_config-cc-dd'] = 'yyyy'
+      ENV['T_some_deep_config-cc-ee-ff'] = 'zzzz'
+      ENV['T_some_deep_config-cc-ee-ff'] = 'zzzz'
+      subject.tcfg_reset
+
+      subject.tcfg['some_deep_config']['aa'].should eql 'xxxx'
+      subject.tcfg['some_deep_config']['cc']['dd'].should eql 'yyyy'
+      subject.tcfg['some_deep_config']['cc']['ee']['ff'].should eql 'zzzz'
+    end
+
+    it "should raise an exception if a bad parent is specified in a deep override" do
+      ENV['T_some_deep_config-cc-xx-ff'] = 'xxxx'
+      subject.tcfg_reset
+      expect { subject.tcfg }.to raise_error(TCFG::BadParentInDeepOverrideError)
+    end
+
+    it "should raise an exception is non existent config is overridden" do
+      ENV['T_fake_config'] = 'xxxx'
+      subject.tcfg_reset
+      expect { subject.tcfg }.to raise_error(TCFG::NoSuchConfigurationKeyError)
+    end
+
+    it "should raise an exception is non existent deep config is overridden" do
+      ENV['T_some_deep_config-abc'] = 'xxxx'
+      subject.tcfg_reset
+      expect { subject.tcfg }.to raise_error(TCFG::NoSuchConfigurationKeyError)
+    end
+  end
 end
 
