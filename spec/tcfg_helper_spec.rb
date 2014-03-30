@@ -22,6 +22,8 @@ describe TCFG::Helper do
         tcfg.keys.include?('sample_string').should == true
         tcfg['sample_string'].should == 'sample_string_value'
 
+        tcfg_get('sample_integer').should == 123
+
       end
     end
 

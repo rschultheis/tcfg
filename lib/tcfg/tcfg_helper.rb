@@ -33,7 +33,7 @@ module TCFG
     end
 
     def tcfg_get key
-      tier_code_defaults[key]
+      tcfg[key]
     end
 
     def tcfg_reset

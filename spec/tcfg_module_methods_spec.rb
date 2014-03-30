@@ -4,13 +4,14 @@ describe TCFG do
     before(:each) do
       @orig_working_dir = Dir.pwd
       Dir.chdir File.join(@orig_working_dir, 'spec/sample_configs')
+      subject.tcfg_reset
     end
     after(:each) do
       Dir.chdir @orig_working_dir
     end
 
     it { subject.tcfg.should include 'sample_string' }
-
+    it { subject.tcfg_get('sample_float').should == 1.23 }
   end
 
   it "should support tcfg_set and tcfg_get" do
