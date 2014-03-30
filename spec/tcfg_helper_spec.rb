@@ -3,15 +3,11 @@ SAMPLE_SECRET_CONFIG_FILE = File.expand_path('../sample_configs/sample1x.secret.
 
 describe TCFG::Helper do
 
-  let(:dummy_class) do 
-    anon_class = Class.new { include TCFG::Helper }
-    anon_class.new
-  end
+  subject { Class.new { include TCFG::Helper }.new }
 
   describe "each config tier independently" do
     it "should support configuration from code using set method" do
-      dummy_class.instance_eval do
-
+      subject.instance_eval do
         tcfg_set :browser, 'firefox'
         tcfg_get(:browser).should == 'firefox'
 
@@ -20,7 +16,7 @@ describe TCFG::Helper do
     end
 
     it "support picking up configuration from a config file" do
-      dummy_class.instance_eval do
+      subject.instance_eval do
 
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg.keys.include?('sample_string').should == true
@@ -30,7 +26,7 @@ describe TCFG::Helper do
     end
 
     it "support picking up configuration from a secret config file" do
-      dummy_class.instance_eval do
+      subject.instance_eval do
 
         tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
         tcfg.keys.include?('sample_secret_username').should == true
@@ -42,7 +38,7 @@ describe TCFG::Helper do
     it "should support overriding based on TCFG_ENVIRONMENT" do
       ENV['TCFG_ENVIRONMENT'] = 'QA'
 
-      dummy_class.instance_eval do
+      subject.instance_eval do
 
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg['sample_string'].should == 'this_is_QA_environment'
@@ -58,7 +54,7 @@ describe TCFG::Helper do
     it "should take environment from secret file if defined" do
       ENV['TCFG_ENVIRONMENT'] = 'QA'
 
-      dummy_class.instance_eval do
+      subject.instance_eval do
 
         tcfg_config_file SAMPLE_CONFIG_FILE
         tcfg_secret_config_file SAMPLE_SECRET_CONFIG_FILE
@@ -76,29 +72,61 @@ describe TCFG::Helper do
 
     it "should support overriding based on environment variables prefixed with TCFG_" do
       ENV['TCFG_sample_string'] = 'overridden'
-      dummy_class.instance_eval do
-
+      subject.instance_eval do
         tcfg_config_file SAMPLE_CONFIG_FILE
-
         tcfg['sample_string'].should == 'overridden'
-
       end
     end
+
+    it "should support overriding based on environment variables prefixed with TCFG_" do
+      ENV['TCFG_sample_string'] = 'overridden'
+      subject.instance_eval do
+        tcfg_config_file SAMPLE_CONFIG_FILE
+        tcfg['sample_string'].should == 'overridden'
+      end
+    end
+
   end
 
   describe "preventing invalid usage" do
     it "should give a clear exception if a non-existent environment is specified" do
       ENV['TCFG_ENVIRONMENT'] = 'NOTREAL'
-      expect { TCFG.tcfg }.to raise_error(TCFG::NoSuchEnvironmentError)
+      expect { subject.tcfg }.to raise_error(TCFG::NoSuchEnvironmentError)
     end
 
     it "should give a clear exception if a non-existent config file is specified" do
-      expect { TCFG.tcfg_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
-      expect { TCFG.tcfg_secret_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
+      expect { subject.tcfg_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
+      expect { subject.tcfg_secret_config_file 'fake.yml' }.to raise_error(TCFG::NoSuchConfigFileError)
     end
   end
 
   #TODO: changing the config file should forget any config from old file
   #TODO: retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
-  #TODO:  any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
+  #
+  describe "tcfg immutablability" do
+    before(:each) do
+      subject.tcfg_config_file SAMPLE_CONFIG_FILE
+    end
+
+    it "should not change a simple string value" do
+      retrieved_cfg = subject.tcfg
+      retrieved_cfg['sample_string'] = 'myedit'
+      subject.tcfg['sample_string'].should_not eql 'myedit'
+    end
+
+    it "should not change array value" do
+      retrieved_cfg = subject.tcfg
+      retrieved_cfg['sample_array'][0] = 'myedit'
+      subject.tcfg['sample_array'][0].should_not eql 'myedit'
+    end
+
+    it "should not change an array value in a hash" do
+      retrieved_cfg = subject.tcfg
+      retrieved_cfg['sample_hash']['h_a'][0] = 'myedit'
+      subject.tcfg['sample_hash']['h_a'][0].should_not eql 'myedit'
+    end
+
+  end
 end
+
+#TODO:  any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)

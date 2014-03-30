@@ -9,29 +9,9 @@ module TCFG
     DEFAULT_CONFIG_FILE = 'tcfg.yml'
 
     def tcfg
-      unless @resolved_config
-        resolved_config = ActiveSupport::HashWithIndifferentAccess.new
-
-        #tier 1 code defaults
-        resolved_config.merge! tier_code_defaults
-
-        #tier 2, the main config file
-        resolved_config.merge! tier_config_file
-
-        #tier 3, the main config file
-        resolved_config.merge! tier_secret_config_file
-
-        #tier 4, environment overrides
-        resolved_config.merge! tier_environment_overrides
-
-        #tier 5, environment variable overrides
-        resolved_config.each_pair do |k, v|
-          env_var_name = "TCFG_#{k}"
-          resolved_config[k] = ENV.fetch(env_var_name, v)
-        end
-        @resolved_config = resolved_config
-      end
-      return @resolved_config
+      @tcfg_resolved_config ||= resolve_config
+      #return a copy of the configuration object to prevent mutations
+      Marshal.load(Marshal.dump(@tcfg_resolved_config))
     end
 
     def tcfg_config_file filename
@@ -57,7 +37,7 @@ module TCFG
     end
 
     def tcfg_reset
-      @resolved_config = nil
+      @tcfg_resolved_config = nil
     end
 
     private
@@ -112,6 +92,29 @@ module TCFG
       unless File.exist? filename
         raise TCFG::NoSuchConfigFileError.new "No such config file '#{filename}'"
       end
+    end
+
+    def resolve_config
+      resolved_config = ActiveSupport::HashWithIndifferentAccess.new
+
+      #tier 1 code defaults
+      resolved_config.merge! tier_code_defaults
+
+      #tier 2, the main config file
+      resolved_config.merge! tier_config_file
+
+      #tier 3, the main config file
+      resolved_config.merge! tier_secret_config_file
+
+      #tier 4, environment overrides
+      resolved_config.merge! tier_environment_overrides
+
+      #tier 5, environment variable overrides
+      resolved_config.each_pair do |k, v|
+        env_var_name = "TCFG_#{k}"
+        resolved_config[k] = ENV.fetch(env_var_name, v)
+      end
+      resolved_config
     end
 
   end

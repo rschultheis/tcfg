@@ -11,6 +11,10 @@ sample_array:
   - c
   - 123
 
+sample_hash:
+  h_s: hash_string
+  h_i: 999
+  h_a: [1,2,3]
 
 tcfg_environments:
   QA:

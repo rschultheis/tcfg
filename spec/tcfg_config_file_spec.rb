@@ -1,9 +1,6 @@
 describe TCFG::Helper do
 
-  let(:dummy_class) do 
-    anon_class = Class.new { include TCFG::Helper }
-    anon_class.new
-  end
+  subject { Class.new { include TCFG::Helper }.new }
 
   #these specs involve changing around the working directory
   #to pick up tcfg.yml / tcfg.secret.yml by default
@@ -15,10 +12,13 @@ describe TCFG::Helper do
     Dir.chdir @orig_working_dir
   end
 
-  describe "defaulting config file name" do
-    it "it should find tcfg.yml and tcfg.secret.yml in working dir if present without any special calls" do
+  context "working directory has tcfg.yml and tcfg.secret.yml" do
+    before(:each) do
       Dir.chdir File.join(@orig_working_dir, 'spec/sample_configs')
-      dummy_class.instance_eval do
+    end
+
+    it "it should find tcfg.yml and tcfg.secret.yml in working dir if present without any special calls" do
+      subject.instance_eval do
         #from tcfg.yml
         tcfg['sample_string'].should == 'sample_string_value_from_default_file'
 
@@ -26,12 +26,16 @@ describe TCFG::Helper do
         tcfg['sample_secret_username'].should == 'this_is_a_username'
       end
     end
-
   end
 
-  #TODO: retrieved config should always be immutable.  Changing it should not affect what comes out of further retrievals
-  #TODO: any TCFG_ environment variable must be pre-defined in config file or code (cant override what doesnt exist)
-  #TODO: config file does not exist
-  #TODO: using TCFG as a singleton
-  #TODO: changing the config file should forget any config from old file
+  context "working directory has tcfg.yml and tcfg.secret.yml, but are overriding config file name" do
+    before(:each) do
+      Dir.chdir File.join(@orig_working_dir, 'spec/sample_configs')
+      subject.tcfg_config_file 'sample1.yml'
+    end
+
+    it "should pickup the specified config file and ignore the default one" do
+      subject.tcfg['sample_string'].should == 'sample_string_value'
+    end
+  end
 end
