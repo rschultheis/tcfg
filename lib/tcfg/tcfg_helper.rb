@@ -249,16 +249,16 @@ module TCFG
       resolved_config = ActiveSupport::HashWithIndifferentAccess.new
 
       #tier 1 code defaults
-      resolved_config.merge! tier_code_defaults
+      resolved_config.deep_merge! tier_code_defaults
 
       #tier 2, the main config file
-      resolved_config.merge! tier_config_file
+      resolved_config.deep_merge! tier_config_file
 
       #tier 3, the main config file
-      resolved_config.merge! tier_secret_config_file
+      resolved_config.deep_merge! tier_secret_config_file
 
       #tier 4, environment overrides
-      resolved_config.merge! tier_environment_overrides
+      resolved_config.deep_merge! tier_environment_overrides
 
       #tier 5, environment variable overrides
       tier_environment_variable_overrides resolved_config
