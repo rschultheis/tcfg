@@ -116,10 +116,15 @@ module TCFG
       t_tcfg[key]
     end
 
+    # like tcfg_get but doesnt raise an exception if key is not defined
+    def tcfg_fetch key, alt_value=nil
+      tcfg.fetch key, alt_value
+    end
+
     # force tcfg to re-resolve the configuration
     #
     # This method can be called to force tcfg to re-resolve the configuration.
-    # This generally should not be needed directly, but situations where it 
+    # This generally should not be needed directly, but situations where it
     # could be used include:
     # - The underlying config file(s) have changed and you want to re-read them
     # - The underlying ENV environment variables have changed and you want to re-read them
@@ -132,7 +137,7 @@ module TCFG
 
     # change the prefix used for configuration finding
     #
-    # By default TCFG looks for 
+    # By default TCFG looks for
     # - environment variables prefixed with T_
     # - sections in config files called t_environments
     #
