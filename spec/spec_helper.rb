@@ -9,12 +9,12 @@ require 'tcfg'
 
 RSpec.configure do |config|
 
-  # allow both old style .should and new sytle expect{} assertions
-  config.expect_with(:rspec) { |c| c.syntax = %i[expect should] }
+ # allow both old style .should and new sytle expect{} assertions
+ config.expect_with(:rspec) { |c| c.syntax = %i[expect should] }
 
-  # remove environment variables laying around from last test
-  config.before(:each) do
-    ENV.delete_if {|k| k =~ /^T_/ }
-  end
+ # remove environment variables laying around from last test
+ config.before(:each) do
+  ENV.delete_if {|k| k =~ /^T_/ }
+ end
 
 end
