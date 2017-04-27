@@ -1,10 +1,11 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
-#used for HashWithIndifferentAccess
+# activesupport used for HashWithIndifferentAccess
 gem 'activesupport'
 
 group :development do
-  gem "rspec"
-  gem "jeweler"
-  gem "yard"
+  gem 'jeweler'
+  gem 'rspec'
+  gem 'rubocop'
+  gem 'yard'
 end

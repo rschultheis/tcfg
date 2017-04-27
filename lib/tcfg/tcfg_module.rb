@@ -18,13 +18,13 @@ module TCFG
   class << self
     include TCFG::Helper
 
-    #the simplest way to acces configuration
+    # the simplest way to acces configuration
     #
     #    TCFG['my_key']
     #    => 'some_value'
     #
     # @see TCFG::Helper#tcfg_get
-    def [] key
+    def [](key)
       tcfg_get key
     end
   end
