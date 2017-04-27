@@ -1,8 +1,19 @@
 require 'yaml'
+
+# rather than load the ginormous activesupport library entirely,
+# pull in some individual objects and utility methods from activesupport
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/deep_merge'
-require 'active_support/core_ext/hash/deep_dup'
 require 'active_support/core_ext/hash/slice'
+# active_support 5 moved deep_dup, 
+# so this trick is in place to support all activesupport versions
+begin
+  # deep_dup is here in active_support 5
+  require 'active_support/core_ext/object/deep_dup'
+rescue LoadError
+  # and here in active_support < 5
+  require 'active_support/core_ext/hash/deep_dup'
+end
 
 module TCFG
 

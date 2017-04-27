@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["robert schultheis"]
-  s.date = "2015-09-17"
+  s.date = "2017-04-27"
   s.description = "A tiered approach to configuration which allows for full control of your test suite through environment variables"
   s.email = "robert.schultheis@gmail.com"
   s.extra_rdoc_files = [
@@ -32,28 +32,28 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://github.com/rschultheis/tcfg"
   s.licenses = ["MIT"]
-  s.rubygems_version = "2.2.2"
+  s.rubygems_version = "2.5.1"
   s.summary = "Test suite configuration for the real world"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, ["~> 3.2"])
-      s.add_development_dependency(%q<rspec>, ["~> 2.14"])
-      s.add_development_dependency(%q<jeweler>, ["~> 2"])
-      s.add_development_dependency(%q<yard>, ["~> 0.8"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
     else
-      s.add_dependency(%q<activesupport>, ["~> 3.2"])
-      s.add_dependency(%q<rspec>, ["~> 2.14"])
-      s.add_dependency(%q<jeweler>, ["~> 2"])
-      s.add_dependency(%q<yard>, ["~> 0.8"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
+      s.add_dependency(%q<rspec>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<yard>, [">= 0"])
     end
   else
-    s.add_dependency(%q<activesupport>, ["~> 3.2"])
-    s.add_dependency(%q<rspec>, ["~> 2.14"])
-    s.add_dependency(%q<jeweler>, ["~> 2"])
-    s.add_dependency(%q<yard>, ["~> 0.8"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
+    s.add_dependency(%q<rspec>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<yard>, [">= 0"])
   end
 end
 
