@@ -7,6 +7,8 @@ TCFG (pronounced "tee config") is test suite configuration for the real world.  
 
 * A tiered structure to configuration which allows for every kind of configuration scenario to be supported.
 
+* Support for easily integrating standalone test suites into common Continuous Integration platforms like Jenkins.
+
 Background
 ----------
 
@@ -62,14 +64,11 @@ Now you can access configuration in any before, after, or it block, like:
         @browser.get tcfg['BASE_URL']
       end
 
-      config.after(:all) do
-        @browser.quit
-      end
     end
 
 If you need to access configuration outside of a before, after, or it block you can use the TCFG module directly:
 
-    Log.level = TCFG['BASE_URL']
+    Log.level = TCFG['LOG_LEVEL']
 
 To control your test suite, you can use environment variables.  To change the browser used:
 
@@ -87,4 +86,10 @@ To control your test suite, you can use environment variables.  To change the br
 
 TCFG is a general purpose configuration framework.  It should be possible to use with most Ruby test frameworks or even for non testing uses.  If you have a use and aren't sure how to handle it with tcfg, file an issue we'll see if we can help you out.
 
+### Examples
 
+TCFG is used in several projects that demonstrate it's capabilities.
+
+* [Standable Capybara example](https://github.com/rschultheis/rspec_capybara_starter)
+
+* More coming soon...
