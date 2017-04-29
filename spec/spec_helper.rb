@@ -1,6 +1,12 @@
 require 'bundler/setup'
 Bundler.setup
 
+# start code coverage reporting for test run
+require 'simplecov'
+SimpleCov.start do
+  add_filter '.bundle/'
+end
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 

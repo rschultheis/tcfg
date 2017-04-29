@@ -70,6 +70,29 @@ describe TCFG::Helper do
     end
   end
 
+  describe '#tcfg_fetch' do
+    before(:each) do
+      subject.tcfg_set :a_config_key, 'a_config_value'
+    end
+
+    it 'should return the same value as tcfg_get for defined config' do
+      subject.tcfg_get(:a_config_key).should eql('a_config_value')
+      subject.tcfg_fetch(:a_config_key).should eql('a_config_value')
+    end
+
+    it 'should return nil if key and second argument is not defined' do
+      subject.tcfg_fetch(:non_existent_config).should be_nil
+      # contrast with behavior of tcfg_get
+      expect { subject.tcfg_get(:non_existent_config) }.to raise_error(TCFG::NoSuchConfigurationKeyError)
+    end
+
+    it 'should return default value(second argument) if key is not defined' do
+      subject.tcfg_fetch(:non_existent_config, 'my_default_value').should eql('my_default_value')
+    end
+
+  end
+
+
   describe 'configuring a custom environment variable prefix' do
     it 'should allow changing environment variable prefix to a custom value' do
       subject.tcfg_set_env_var_prefix('CUST_')
@@ -106,10 +129,17 @@ describe TCFG::Helper do
       subject.tcfg_config_file SAMPLE_CONFIG_FILE
     end
 
-    it 'should not change a simple string value' do
+    it 'the top level hash should be frozen to discourage mutating it' do
       retrieved_cfg = subject.tcfg
-      retrieved_cfg['sample_string'] = 'myedit'
-      subject.tcfg['sample_string'].should_not eql 'myedit'
+      retrieved_cfg.should be_frozen
+      expect { retrieved_cfg['sample_string'] = 'new_value' }.to raise_error(RuntimeError)
+    end
+
+    it 'should not persist changes to an array value in retrieved config' do
+      retrieved_cfg = subject.tcfg
+      retrieved_cfg['sample_array'] << 'added_element'
+      subject.tcfg['sample_array'].last.should_not eql 'added_element'
+      subject.tcfg['sample_array'].last.should eql 123
     end
 
     it 'should not change array value' do

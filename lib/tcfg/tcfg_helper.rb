@@ -5,7 +5,7 @@ require 'yaml'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/deep_merge'
 require 'active_support/core_ext/hash/slice'
-# active_support 5 moved deep_dup, 
+# active_support 5 moved deep_dup,
 # so this trick is in place to support all activesupport versions
 begin
   # deep_dup is here in active_support 5
@@ -16,7 +16,8 @@ rescue LoadError
 end
 
 module TCFG
-  # TCFG::Helper does all the "heavy lifting".  Essentially all the logic within TCFG is defined by this module.
+  # TCFG::Helper does all the "heavy lifting".
+  # Essentially all the logic within TCFG is defined by this module.
   # The intended ways to use this module are:
   #
   # - use the TCFG module methods whenever a single instance of configuration will do
@@ -60,8 +61,8 @@ module TCFG
     # @return [ActiveSupport::HashWithIndifferentAccess] a copy of the resolved configuration
     def tcfg
       @tcfg_resolved_config ||= resolve_config
-      # return a deep copy of the configuration object to prevent mutations
-      @tcfg_resolved_config.deep_dup
+      # return a frozen deep copy of the configuration object to prevent mutations
+      @tcfg_resolved_config.deep_dup.freeze
     end
 
     # change the name of the public configuration file
@@ -174,22 +175,11 @@ module TCFG
     end
 
     def tier_config_file
-      @tcfg_config_filename ||= DEFAULT_CONFIG_FILE
-      tcfg_load_optional_config_file @tcfg_config_filename
+      tcfg_load_optional_config_file possible_config_file_name
     end
 
     def tier_secret_config_file
-      if @tcfg_secret_config_filename
-        tcfg_load_optional_config_file @tcfg_secret_config_filename
-      elsif @tcfg_config_filename
-        ext = File.extname @tcfg_config_filename
-        base = File.basename @tcfg_config_filename, ext
-        dir = File.dirname @tcfg_config_filename
-        possible_secret_filename = dir + '/' + base + '.secret' + ext
-        tcfg_load_optional_config_file possible_secret_filename
-      else
-        {}
-      end
+      tcfg_load_optional_config_file possible_secret_config_file_name
     end
 
     def tier_environment_overrides
@@ -282,6 +272,31 @@ module TCFG
       tier_environment_variable_overrides resolved_config
 
       resolved_config
+    end
+
+
+    def possible_config_file_name
+      possible_file_name = if @tcfg_config_filename
+                             @tcfg_config_filename
+                           else
+                             DEFAULT_CONFIG_FILE
+                           end
+      possible_file_name
+    end
+
+    def possible_secret_config_file_name
+      possible_file_name = if @tcfg_secret_config_filename
+                             @tcfg_secret_config_filename
+                           else
+                             # turn 'somedir/tcfg.yml' into 'somedir/tcfg.secret.yml'
+                             non_secret_config_file = possible_config_file_name
+                             ext = File.extname non_secret_config_file
+                             base = File.basename non_secret_config_file, ext
+                             dir = File.dirname non_secret_config_file
+                             possible_secret_filename = dir + '/' + base + '.secret' + ext
+                             possible_secret_filename
+                           end
+      possible_file_name
     end
   end
 
