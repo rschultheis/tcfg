@@ -276,7 +276,7 @@ module TCFG
 
 
     def possible_config_file_name
-      possible_file_name = if @tcfg_config_filename
+      possible_file_name = if instance_variable_defined? :@tcfg_config_filename
                              @tcfg_config_filename
                            else
                              DEFAULT_CONFIG_FILE
@@ -285,7 +285,7 @@ module TCFG
     end
 
     def possible_secret_config_file_name
-      possible_file_name = if @tcfg_secret_config_filename
+      possible_file_name = if instance_variable_defined? :@tcfg_secret_config_filename
                              @tcfg_secret_config_filename
                            else
                              # turn 'somedir/tcfg.yml' into 'somedir/tcfg.secret.yml'
